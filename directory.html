@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="css/style.css">
+
+<body  ng-app="myApp" ng-controller="myCtrl">
+    <header id="home-section">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 py-5">
+                <form class=" form border border-light p-5" novalidate>
+                    <h1>Student Directory</h1>
+                    <p>{{message}} </p><br>
+
+                    <input type="text" ng-model="user.name" class="form-control form-control-lg" placeholder="Full Name" required><br>
+                    <br>
+                    <input type="email" ng-model="user.email" class="form-control form-control-lg" placeholder="Email" required><br>
+                    <br>
+                    <input type="text" ng-model="user.phone" class="form-control form-control-lg" placeholder="Phone"><br>
+                    <br>
+                    <input type="text" ng-model="user.stream" class="form-control form-control-lg" placeholder="Stream" required><br>
+                    <br>
+                    <input type="text" ng-model="user.gender" class="form-control form-control-lg" placeholder=" Gender" required><br>
+                    <br>
+                    <textarea type="text" ng-model="user.about" class="form-control form-control-lg" placeholder="About" required></textarea><br>
+                    <br>
+                    <textarea type="text" ng-model="user.experience" class="form-control form-control-lg" placeholder="Your Experience" required><br>
+                    </textarea><br><br>
+                    <input type="hidden" ng-model="user.user_id" class="form-control form-control-lg">
+                    <button ng-click="save()" class="btn btn-success">Submit</button>
+                    <button ng-click="update()" class="btn btn-primary">Update</button>
+                    <button ng-click="reset()" class="btn btn-danger">Reset</button>
+                </form><hr>
+            </div>
+        </div>
+    </header>
+    <table style="width: 100%" class="table-striped">
+        <button ng-click="getStudents()" class="btn btn-secondary">Refresh</button>
+        <tr class="thead-dark">
+            <th>Full Name</th>
+            <th>Stream</th>
+            <th>Gender</th>
+            <th>About</th>
+            <th>Experience</th>
+            <th>Action</th>
+            <tr ng-repeat="data in res.data">
+                <td>{{ data.name}}</td>
+                <td>{{ data.stream}}</td>
+                <td>{{ data.gender}}</td>
+                <td>{{ data.about}}</td>
+                <td>{{ data.experience}}</td>
+                <td>
+                    <button ng-click="edit(data.id)" class="btn btn-primary">Edit</button>
+                    <button ng-click="delete(data.id)" class="btn btn-danger">Delete</button>
+                </td>
+            </tr>
+        </tr>
+
+    </table>
+
+</div>
+</body>
+<script>
+var app = angular.module("myApp", []);
+
+app.controller("myCtrl", function($scope, $http) {
+    // model data for forms and table starts here
+    $scope.master ={
+        name:"",
+        email:"",
+        phone:"",
+        stream:"",
+        gender:"",
+        about:"",
+        year:"",
+        experience:"",
+        user_id:"",
+    };
+
+//resets and generates the user scope data from master data
+$scope.reset = function(){
+    $scope.user = angular.copy($scope.master);
+};
+
+//call reset function to make sure form reset function is empty when windows load
+$scope.reset();
+//message data to hold and display success or failure of our api request
+$scope.message ="";
+
+//save function
+$scope.save= function(){
+    $http.post("https://click-on-kaduna.herokuapp.com/api/student", $scope.user)
+    .then(function(response){
+        $scope.message = response.data.message;
+        $scope.getStudents();
+        $scope.reset();
+    });
+};
+//get students function
+
+    $scope.getStudents = function(){
+        $http.get("https://click-on-kaduna.herokuapp.com/api/student")
+        .then(function(response){
+            $scope.res = response.data;
+        });
+    };
+
+    //call getsStudents to make sure all registered students are updated on the table on load time
+    $scope.getStudents();
+
+    //delete function
+        $scope.delete = function($id){
+            $http.delete("https://click-on-kaduna.herokuapp.com/api/student/"+ $id)
+            .then(function(response){
+                $scope.message = response.data.message;
+                $scope.getStudents();
+                $scope.reset();
+            });
+        };
+
+    //edit function
+    $scope.edit = function($id){
+        $http.get("https://click-on-kaduna.herokuapp.com/api/student/"+ $id)
+        .then(function(response){
+            $res = response.data
+            $data = $res.data
+
+            $scope.user.name = $data.name
+            $scope.user.email = $data.email
+            $scope.user.phone = $data.phone
+            $scope.user.stream = $data.stream
+            $scope.user.gender = $data.gender
+            $scope.user.about = $data.about
+            $scope.user.experience = $data.experience
+            $scope.user.user_id = $data.user_id
+
+            // $scope.getStudents();
+            // $scope.reset();
+        });
+    };
+    //update function
+    $scope.update = function(){
+        $http.patch("https://click-on-kaduna.herokuapp.com/api/student"+ $scope.user.user_id, $scope.user)
+        .then(function(response){
+            $scope.message = response.data.message;
+            $scope.getStudents();
+            $scope.reset();
+        });
+    };
+
+});
+    </script>
+</html>

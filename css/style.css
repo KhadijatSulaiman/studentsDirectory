@@ -1,0 +1,31 @@
+body {
+	background: #333333;
+	/* color: #7ed6df; */
+	color: #ecf0f1;
+	font-family: 'Lato', sans-serif;
+	font-weight: 300; }
+
+#home-section {
+	background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url("../img/img.jpg");
+	background-attachment: fixed;
+	background-position: center;
+	background-size: cover;
+	min-height: 700px;
+}
+.form-control:focus:invalid{
+    border: 3px solid red;
+}
+#home-section .btn {
+    font-family: sans-serif;
+    font-weight: 700px;
+    text-transform: uppercase;
+	border-radius: 3px; 
+}
+#home-section .btn:hover{
+	transform: translateY(-3px);
+	box-shadow: 0 1rem 2rem rgba((0,0,0,0.7), .2);
+}
+                                                                                                    
+.table-hover{
+	color: #ecf0f1;
+}
